@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Generador Resultados Mundial</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #06152f;
+    color: white;
+    padding: 20px;
+  }
+
+.panel {
+    display: inline-block;
+
+    background: #0b2147;
+
+    padding: 20px;
+
+    border-radius: 18px;
+}
+
+  input, button {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin: 5px;
+    font-size: 16px;
+  }
+
+  button {
+    background: #d71920;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+
+.matches{
+  position:absolute;
+  top:480px;
+  left:50px;
+  right:50px;
+}
+.preview{
+    width:1400px;
+    height:1920px;
+
+    background-image:url('./assets/fondo-mundial-story.png');
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    position:relative;
+    overflow:hidden;
+}
+
+  
+
+
+.fecha-banner{
+  position:absolute !important;
+  top:300px !important; /* cambia este número */
+  left:50% !important;
+  transform:translateX(-50%) !important;
+  z-index:999 !important;
+
+  background:rgba(0,0,0,.55);
+  border-radius:18px;
+  padding:18px 50px;
+}
+ 
+
+  
+
+  .blank {
+    display: inline-block;
+    background: white;
+    width: 180px;
+    height: 35px;
+    margin-left: 15px;
+    border-radius: 5px;
+  }
+
+  
+
+  .match {
+    height: 105px;
+    background: white;
+    color: #06152f;
+    border-radius: 18px;
+    display: grid;
+    grid-template-columns: 1fr 120px 70px 120px 1fr;
+    align-items: center;
+    margin-bottom: 18px;
+    font-weight: 900;
+    font-size: 34px;
+    text-align: center;
+   position:relative;
+  }
+
+  .score {
+    background: #06152f;
+    color: white;
+    padding: 18px 0;
+    border-radius: 12px;
+  }
+
+  .vs {
+    background: #d71920;
+    color: white;
+    padding: 18px 0;
+    border-radius: 8px;
+  }
+
+
+  .brand {
+    color: #39a84a;
+    font-size: 42px;
+    font-weight: 900;
+  }
+.fecha-banner{
+    position:absolute;
+
+    top:20px; /* <-- aquí ajustas altura */
+
+    left:50%;
+    transform:translateX(-50%);
+
+    background:rgba(0,0,0,.55);
+
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+
+    border-radius:18px;
+
+    padding:18px 50px;
+
+    z-index:5;
+}
+
+.fecha-banner span{
+    color:#39a84a;
+
+    font-size:52px;
+
+    font-weight:900;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+}
+.btn-delete{
+    position:absolute;
+
+    right:15px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:40px;
+    height:40px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#d71920;
+
+    color:white;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    z-index:10;
+}
+.toolbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:nowrap;
+}
+
+#fecha{
+    width:130px;
+}
+
+#equipo1,
+#equipo2{
+    width:180px;
+}
+
+#goles1,
+#goles2{
+    width:70px;
+    text-align:center;
+}
+
+.vs-input{
+    font-weight:900;
+    color:white;
+    font-size:22px;
+    min-width:40px;
+    text-align:center;
+}
+.toolbar button{
+    min-width:130px;
+    height:44px;
+
+    white-space:nowrap;
+
+    font-size:14px;
+    font-weight:700;
+}
+</style>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-192.png">
+<meta name="theme-color" content="#06152f">
+</head>
+<body>
+
+<div class="panel">
+  <h2>Generador de Resultados Mundial</h2>
+
+  <div class="toolbar">
+
+    <input id="fecha" placeholder="11/06/2026">
+
+    <input id="equipo1" placeholder="Equipo 1">
+
+    <input id="goles1" type="number" placeholder="0">
+
+    <div class="vs-input">VS</div>
+
+    <input id="goles2" type="number" placeholder="0">
+
+    <input id="equipo2" placeholder="Equipo 2">
+
+    <button onclick="agregarPartido()">
+        Agregar partido
+    </button>
+
+    <button onclick="descargarImagen()">
+        Descargar PNG
+    </button>
+
+</div>
+
+  <div id="poster" class="preview">
+    <div class="brush-red"></div>
+    <div class="brush-green"></div>
+
+   <div class="fecha-banner" id="fechaBanner">
+  <span id="fechaPoster">FECHA ___</span>
+</div>
+
+    <div id="listaPartidos" class="matches"></div>
+
+    
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+let partidos = [];
+
+function agregarPartido() {
+  const fecha = document.getElementById("fecha").value || "FECHA ___";
+  const equipo1 = document.getElementById("equipo1").value || "EQUIPO 1";
+  const goles1 = document.getElementById("goles1").value || "-";
+  const goles2 = document.getElementById("goles2").value || "-";
+  const equipo2 = document.getElementById("equipo2").value || "EQUIPO 2";
+
+  partidos.push({ equipo1, goles1, goles2, equipo2 });
+
+  document.getElementById("fechaPoster").textContent = fecha.toUpperCase();
+
+  renderPartidos();
+
+  document.getElementById("equipo1").value = "";
+  document.getElementById("goles1").value = "";
+  document.getElementById("goles2").value = "";
+  document.getElementById("equipo2").value = "";
+}
+
+function renderPartidos() {
+  const lista = document.getElementById("listaPartidos");
+
+  lista.innerHTML = "";
+
+  partidos.forEach((p, index) => {
+
+    lista.innerHTML += `
+      <div class="match">
+
+        <div>${p.equipo1}</div>
+
+        <div class="score">${p.goles1}</div>
+
+        <div class="vs">VS</div>
+
+        <div class="score">${p.goles2}</div>
+
+        <div>${p.equipo2}</div>
+
+        <button class="btn-delete"
+                onclick="eliminarPartido(${index})">
+          ✕
+        </button>
+
+      </div>
+    `;
+  });
+}
+
+function eliminarPartido(index){
+
+    if(!confirm("¿Eliminar este partido?")) return;
+
+    partidos.splice(index,1);
+
+    renderPartidos();
+}
+function descargarImagen() {
+  const poster = document.getElementById("poster");
+
+  html2canvas(poster, {
+    scale: 2,
+    backgroundColor: null
+  }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "resultados-mundial.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
+</script>
+
+</body>
+</html>
