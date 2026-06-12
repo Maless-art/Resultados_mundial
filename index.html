@@ -359,7 +359,8 @@ function renderPartidos() {
 
         <div>${p.equipo2}</div>
 
-        <button class="btn-delete"
+        <button class="btn-delete no export">X</button>
+<button class="btn-edit no-export">✏️</button>
                 onclick="eliminarPartido(${index})">
           ✕
         </button>
@@ -378,17 +379,29 @@ function eliminarPartido(index){
     renderPartidos();
 }
 function descargarImagen() {
-  const poster = document.getElementById("poster");
 
-  html2canvas(poster, {
-    scale: 2,
-    backgroundColor: null
-  }).then(canvas => {
-    const link = document.createElement("a");
-    link.download = "resultados-mundial.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  });
+    const ocultar = document.querySelectorAll('.no-export');
+
+    ocultar.forEach(el => {
+        el.style.display = 'none';
+    });
+
+    html2canvas(document.getElementById('poster'), {
+        scale: 2
+    }).then(canvas => {
+
+        const link = document.createElement('a');
+
+        link.download = 'resultados-mundial.png';
+        link.href = canvas.toDataURL('image/png');
+
+        link.click();
+
+        ocultar.forEach(el => {
+            el.style.display = '';
+        });
+
+    });
 }
 </script>
 
