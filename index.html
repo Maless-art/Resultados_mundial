@@ -216,6 +216,55 @@
     font-size:14px;
     font-weight:700;
 }
+
+.preview-wrap{
+  width:100%;
+  overflow-x:auto;
+}
+
+.preview{
+  transform-origin:top left;
+}
+
+@media (max-width: 768px){
+
+  body{
+    padding:8px;
+  }
+
+  .panel{
+    width:100%;
+    max-width:100%;
+    padding:12px;
+    box-sizing:border-box;
+  }
+
+  .toolbar{
+    flex-wrap:wrap;
+  }
+
+  #fecha,
+  #equipo1,
+  #equipo2{
+    width:100%;
+  }
+
+  #goles1,
+  #goles2{
+    width:70px;
+  }
+
+  .preview{
+    width:1400px;
+    height:1920px;
+    transform:scale(.28);
+    transform-origin:top left;
+  }
+
+  .preview-wrap{
+    height:540px;
+  }
+}
 </style>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icono-192.png">
@@ -250,7 +299,7 @@
     </button>
 
 </div>
-
+<div class="preview-wrap">
   <div id="poster" class="preview">
     <div class="brush-red"></div>
     <div class="brush-green"></div>
@@ -260,7 +309,7 @@
 </div>
 
     <div id="listaPartidos" class="matches"></div>
-
+</div>
     
     </div>
   </div>
